@@ -16,7 +16,6 @@ export class AppService {
 
   startPeriodicCheckForSymbol(symbol: string) {
     const job = new CronJob(CronExpression.EVERY_SECOND, () => {});
-
     this.schedulerRegistry.addCronJob(`periodic-check-for-${symbol}`, job);
     job.start();
   }
