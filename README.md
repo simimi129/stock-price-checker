@@ -1,6 +1,7 @@
 ### How to start app (if you know a better way feel free to do how u like)
 
 - download from github
+- create a .env file with API_KEY (didnt know how private the api key is you've given)
 - make sure docker desktop is running
 - first time run: docker compose up --build
 - after that: docker compose up

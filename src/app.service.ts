@@ -48,20 +48,27 @@ export class AppService {
   }
 
   async startPeriodicCheckForSymbol(symbol: string) {
+    const { c, pc } = await this.finnhubService.getQuote(symbol);
+    if (c === 0) {
+      throw 'no stock with given name';
+    }
     const job = new CronJob(CronExpression.EVERY_MINUTE, () =>
-      this.getQuoteAndSave(symbol),
+      this.getQuoteAndSave(symbol, c, pc),
     );
     this.schedulerRegistry.addCronJob(`periodic-check-for-${symbol}`, job);
     job.start();
     return `peridoic check for stock ${symbol} started look at the console for at least a minute :)`;
   }
 
-  async getQuoteAndSave(symbol: string) {
-    const { c, pc } = await this.finnhubService.getQuote(symbol);
+  async getQuoteAndSave(
+    symbol: string,
+    currentPrice: number | undefined,
+    previousClosePrice: number | undefined,
+  ) {
     const stock: Partial<Stock> = {
-      symbol: symbol,
-      currentPrice: c,
-      previousClosePrice: pc,
+      symbol,
+      currentPrice,
+      previousClosePrice,
     };
     await this.stockRepository.save(stock as Partial<Stock>);
     console.log(`periodic check for ${symbol}`);
