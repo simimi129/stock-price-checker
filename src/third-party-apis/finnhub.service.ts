@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DefaultApi, Quote } from 'finnhub-ts';
+import { DefaultApi } from 'finnhub-ts';
 
 @Injectable()
 export class FinnhubService {

@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { FinnhubService } from './finnhub.service';
+import { FinnhubService } from './third-party-apis/finnhub.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Stock } from './domain/Stock.entity';
 
 @Module({
   imports: [
@@ -17,10 +18,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'postgres',
       password: 'postgres',
       database: 'postgres',
-      entities: [],
+      entities: [Stock],
       synchronize: true,
       autoLoadEntities: true,
     }),
+    TypeOrmModule.forFeature([Stock]),
   ],
   controllers: [AppController],
   providers: [AppService, FinnhubService],

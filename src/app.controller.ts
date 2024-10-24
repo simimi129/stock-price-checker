@@ -1,18 +1,55 @@
-import { Controller, Get, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Put,
+} from '@nestjs/common';
 import { AppService } from './app.service';
-import { Quote } from 'finnhub-ts';
+import { StockDataDto } from './domain/StockData.dto';
 
 @Controller('stock')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get(':symbol')
-  getStockData(@Param('symbol') symbol: string) {
-    return this.appService.getStockData(symbol);
+  async getStockData(@Param('symbol') symbol: string): Promise<StockDataDto> {
+    if (!isNaN(+symbol)) {
+      throw new HttpException(
+        { status: HttpStatus.BAD_REQUEST, error: 'Symbol cannot be a number' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      return await this.appService.getStockData(symbol);
+    } catch (error: any) {
+      throw new HttpException(
+        { status: HttpStatus.INTERNAL_SERVER_ERROR, error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Put(':symbol')
-  startPeriodicCheckForSymbol(@Param('symbol') symbol: string) {
-    return this.appService.startPeriodicCheckForSymbol(symbol);
+  async startPeriodicCheckForSymbol(
+    @Param('symbol') symbol: string,
+  ): Promise<string> {
+    if (!isNaN(+symbol)) {
+      throw new HttpException(
+        { status: HttpStatus.BAD_REQUEST, error: 'Symbol cannot be a number' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      return await this.appService.startPeriodicCheckForSymbol(symbol);
+    } catch (error: any) {
+      throw new HttpException(
+        { status: HttpStatus.INTERNAL_SERVER_ERROR, error },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
